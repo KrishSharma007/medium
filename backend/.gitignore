@@ -14,7 +14,9 @@ dist/
 # deps
 node_modules/
 .wrangler
+
 .toml
+wrangler.toml
 
 # env
 .env
