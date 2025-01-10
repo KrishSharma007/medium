@@ -1,10 +1,30 @@
 import axios from "axios";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { signinType, signupType } from "../zod";
 import { BACKEND_URL } from "../config";
 
 export const Auth = ({ type }: { type: "signup" | "signin" }) => {
+  const nav = useNavigate();
+  useEffect(() => {
+    const checkAuth = async () => {
+      const token = localStorage.getItem("token");
+      try {
+        const response = await axios.get(BACKEND_URL + "/user/me", {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        });
+        if (response.data.logged) {
+          nav("/blog");
+        }
+      } catch (error) {
+        console.error("Error checking authentication:", error);
+      }
+    };
+
+    checkAuth();
+  }, []);
   const [SignupInputs, setSignupInputs] = useState<signupType>({
     email: "",
     username: "",
@@ -15,8 +35,6 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
     username: "",
     password: "",
   });
-  const navigate = useNavigate();
-
   async function sendReq() {
     try {
       const res =
@@ -26,7 +44,7 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("username", res.data.username);
       alert("User authenticated successfully!");
-      navigate("/blog");
+      nav("/blog");
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.error("Axios error:", error.response?.data || error.message);
@@ -34,7 +52,6 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
           error.response?.data?.error || "An error occurred. Please try again."
         );
       } else {
-        // Handle unexpected errors that are not Axios errors
         console.error("Unexpected error:", error);
         alert("An unexpected error occurred. " + error);
       }

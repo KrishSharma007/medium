@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Signup from "./pages/Signup";
 import Signin from "./pages/Signin";
@@ -16,6 +16,7 @@ function App() {
           <Route path="/blog" element={<Blog />}></Route>
           <Route path="/blog/:id" element={<BlogMain />}></Route>
           <Route path="/edit" element={<Publish />}></Route>
+          <Route path="*" element={<Navigate to="/signin" replace />} />
         </Routes>
       </BrowserRouter>
     </>

@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
-import { sign } from "hono/jwt";
+import { sign, verify } from "hono/jwt";
 import { signinInput, signupInput } from "../zod";
 // import bcrypt from "bcrypt";
 const medium = new Hono<{
@@ -81,6 +81,45 @@ medium.post("/signin", async (c) => {
   } catch (error) {
     console.error(error);
     return c.json({ error: "Internal Server Error" }, 500);
+  }
+});
+
+medium.get("/me", async (c) => {
+  try {
+    const prisma = new PrismaClient({
+      datasources: {
+        db: { url: c.env.DATABASE_URL },
+      },
+    }).$extends(withAccelerate());
+
+    const header = c.req.header("Authorization") || "";
+    const token = header.split(" ")[1];
+
+    if (!token) {
+      return c.json({ message: "Authorization token missing" }, 401);
+    }
+
+    const decoded = (await verify(token, c.env.JWT_SECRET)) as {
+      username: string;
+      id: string;
+    };
+
+    if (!decoded || !decoded.id) {
+      return c.json({ message: "Invalid token" }, 401);
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.id },
+    });
+
+    if (!user) {
+      return c.json({ logged: false, message: "User not found" }, 404);
+    }
+
+    return c.json({ logged: true });
+  } catch (error: any) {
+    console.error(error);
+    return c.json({ logged: false, message: "Error occurred" }, 500);
   }
 });
 

@@ -7,10 +7,10 @@ import { createBlogType } from "../zod";
 import { useNavigate } from "react-router-dom";
 
 export const Publish = () => {
+  const navigate = useNavigate();
   const { currentUser } = useBlogs();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const navigate = useNavigate();
   const handlePost = async () => {
     if (!title || !content) {
       alert("Please fill in both the title and the story.");
