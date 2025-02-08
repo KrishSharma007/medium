@@ -48,34 +48,6 @@ A feature-rich blogging platform inspired by Medium, built with cutting-edge web
 
 ---
 
-## 📂 Project Structure
-```
-Medium/
-│── client/        # Frontend (React + TypeScript)
-│   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   ├── assets/
-│   │   ├── App.tsx
-│   │   ├── main.tsx
-│   ├── public/
-│   ├── index.html
-│   ├── package.json
-│
-│── server/        # Backend (Cloudflare Workers + Hono)
-│   ├── routes/
-│   ├── controllers/
-│   ├── middleware/
-│   ├── index.ts
-│   ├── package.json
-│
-│── prisma/        # Database schema (PostgreSQL)
-│── .env           # Environment variables
-│── README.md      # Project documentation
-```
-
----
-
 ## 🤝 Contributing
 
 Want to contribute? Follow these steps:
